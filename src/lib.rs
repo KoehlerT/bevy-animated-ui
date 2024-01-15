@@ -1,14 +1,8 @@
-use bevy::prelude::*;
-
-mod plugin;
-
-#[derive(Component)]
-pub struct UiAnimation {
-	pub delay: f32,
-	pub duration: f32,
-}
+mod button;
+mod sidebar;
 
 pub mod prelude {
-	pub use super::plugin::*;
-	pub use super::UiAnimation;
+	pub use super::button::*;
+	pub use super::sidebar::*;
+	pub use super::sidebar::component::*;
 }

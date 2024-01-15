@@ -2,9 +2,9 @@ use std::time::Duration;
 
 use bevy::prelude::*;
 
-pub struct UiAnimationPlugin;
+pub struct ButtonAnimationPlugin;
 
-impl Plugin for UiAnimationPlugin {
+impl Plugin for ButtonAnimationPlugin {
 	fn build(&self, app : &mut App) {
 		app.add_systems(Update, (animate, play_animation));
 	}
@@ -62,7 +62,6 @@ fn play_animation(
 		if animation.playing {
 			animation.current = ((animation.goal - animation.start) / animation.duration.as_secs_f32()) * animation.delay.as_secs_f32() + animation.start;
 			style.width = Val::Percent(animation.current);
-			style.height = Val::Percent(animation.current);
 			animation.delay += time.delta();
 			if animation.delay >= animation.duration {
 				animation.playing = false

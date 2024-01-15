@@ -6,7 +6,7 @@ fn main() {
 	App::new()
         .add_plugins(DefaultPlugins)
 		.add_plugins(WorldInspectorPlugin::new())
-		.add_plugins(UiAnimationPlugin)
+		.add_plugins(ButtonAnimationPlugin)
         .add_systems(Startup, setup)
         .run();
 }
@@ -43,7 +43,7 @@ fn build_button(
 	commands.spawn(NodeBundle {
 		style: Style {
 			width: Val::Px(100.),
-			height: Val::Px(50.),
+			aspect_ratio: Some(1./1.5),
 			align_items: AlignItems::Center,
 			justify_content: JustifyContent::Center,
 			..default()
@@ -54,7 +54,7 @@ fn build_button(
 		builder.spawn(ButtonBundle {
 			style: Style {
 				width: Val::Percent(100.),
-				height: Val::Percent(100.),
+				aspect_ratio: Some(1.),
 				..default()
 			},
 			background_color: Color::BEIGE.into(),
