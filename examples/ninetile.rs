@@ -6,7 +6,7 @@ fn main() {
 	App::new()
         .add_plugins(DefaultPlugins)
 		.add_plugins(WorldInspectorPlugin::new())
-		.add_plugins(ButtonAnimationPlugin)
+		.add_plugins(NinetileButtonPlugin)
         .add_systems(Startup, setup)
         .run();
 }
@@ -50,4 +50,38 @@ fn setup(
 		TextSection::new("This is content!".to_string(), text_style.clone())
 	])).id();
 	commands.entity(content).add_child(text);
+
+	// Make interactive button
+	let interactive_button = make_interactive_button(&mut commands, &asset_server, &mut texture_atlases);
+	commands.entity(container).add_child(interactive_button);
+}
+
+fn make_interactive_button(commands : &mut Commands,
+	asset_server: &Res<AssetServer>,
+	texture_atlases: &mut ResMut<Assets<TextureAtlas>>,) -> Entity
+{
+	let texture_handle = asset_server.load("glassPanel_corners_button.png");
+    let texture_atlas =
+        TextureAtlas::from_grid(texture_handle, Vec2::new(33.3, 33.3), 3, 9, None, None);
+	let texture_atlas_handle = texture_atlases.add(texture_atlas);
+
+	let button_descriptor = interactive::NinetileButton {
+		texture_atlas: texture_atlas_handle.clone(),
+		interaction_none: (0..9).collect::<Vec<_>>().try_into().expect("wrong size iterator"),
+		interaction_hovered: Some((9..18).collect::<Vec<_>>().try_into().expect("wrong size iterator")),
+		interaction_pressed: Some((18..27).collect::<Vec<_>>().try_into().expect("wrong size iterator")),
+		border: None
+	};
+
+	let (button, content) = create_ninetile_button(commands, &button_descriptor);
+
+	let text = commands.spawn(TextBundle::from_sections([
+		TextSection::new("This is Buttoncontent!".to_string(), TextStyle {
+			font_size: 20.,
+			..default()
+		})
+	])).id();
+	commands.entity(content).add_child(text);
+
+	return button;
 }

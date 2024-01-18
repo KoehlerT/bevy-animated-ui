@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+pub mod interactive;
+
 pub fn spawn_ninetile(commands : &mut Commands, handle: Handle<TextureAtlas>, border : Option<f32>) -> (Entity, Entity) {
 	let border = border.unwrap_or(20.);
 	let parent = commands.spawn(NodeBundle {

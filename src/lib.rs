@@ -7,4 +7,5 @@ pub mod prelude {
 	pub use super::sidebar::*;
 	pub use super::sidebar::component::*;
 	pub use super::ninetile::*;
+	pub use super::ninetile::interactive::*;
 }
