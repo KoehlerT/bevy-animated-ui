@@ -9,6 +9,7 @@ pub fn spawn_ninetile(commands : &mut Commands, handle: Handle<TextureAtlas>, bo
 			display: Display::Grid,
 			grid_template_columns: vec![GridTrack::px(border), GridTrack::auto(), GridTrack::px(border)],
 			grid_template_rows: vec![GridTrack::px(border), GridTrack::auto(), GridTrack::px(border)],
+			margin: UiRect::all(Val::Px(border)),
 			..default()
 		},
 		..default()
