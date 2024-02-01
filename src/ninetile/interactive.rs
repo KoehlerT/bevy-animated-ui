@@ -23,7 +23,7 @@ struct NinetileButtonComponent {
 	children: [Entity; 9]
 }
 
-pub fn create_ninetile_button(commands :&mut Commands, button_descr: &NinetileButton) -> (Entity, Entity){
+pub fn create_ninetile_button(commands :&mut Commands, button_descr: &NinetileButton, child_builder: impl FnOnce(&mut ChildBuilder)) -> Entity{
 	let border = button_descr.border.unwrap_or(20.);
 
 	let button = commands.spawn(ButtonBundle {
@@ -31,7 +31,8 @@ pub fn create_ninetile_button(commands :&mut Commands, button_descr: &NinetileBu
 			display: Display::Grid,
 			grid_template_columns: vec![GridTrack::px(border), GridTrack::auto(), GridTrack::px(border)],
 			grid_template_rows: vec![GridTrack::px(border), GridTrack::auto(), GridTrack::px(border)],
-			margin: UiRect::all(Val::Px(border)),
+			margin: UiRect::all(Val::Px(border)), // Workaround because size calculation of this node excludes the border (= content child node)
+			justify_self: JustifySelf::Stretch,
 			..default()
 		},
 		background_color: Color::NONE.into(),
@@ -50,7 +51,9 @@ pub fn create_ninetile_button(commands :&mut Commands, button_descr: &NinetileBu
 		children: [images[0], images[1],images[2],images[3],images[4], images[5],images[6],images[7],images[8]]
 	});
 
-	return (button, images[4]); //Parent, Content
+	commands.entity(images[4]).with_children(child_builder);
+
+	return button; //Parent, Content
 }
 
 fn get_tile(commands : &mut Commands, handle: &Handle<TextureAtlas>, index: usize) -> Entity {

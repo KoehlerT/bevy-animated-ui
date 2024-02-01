@@ -2,14 +2,14 @@ use bevy::prelude::*;
 
 pub mod interactive;
 
-pub fn spawn_ninetile(commands : &mut Commands, handle: Handle<TextureAtlas>, border : Option<f32>) -> (Entity, Entity) {
+pub fn spawn_ninetile(commands : &mut Commands, handle: Handle<TextureAtlas>, border : Option<f32>, child_builder: impl FnOnce(&mut ChildBuilder)) -> Entity {
 	let border = border.unwrap_or(20.);
 	let parent = commands.spawn(NodeBundle {
 		style: Style {
 			display: Display::Grid,
 			grid_template_columns: vec![GridTrack::px(border), GridTrack::auto(), GridTrack::px(border)],
 			grid_template_rows: vec![GridTrack::px(border), GridTrack::auto(), GridTrack::px(border)],
-			margin: UiRect::all(Val::Px(border)),
+			margin: UiRect::all(Val::Px(border)), // Workaround because size calculation of this node excludes the border (= content child node)
 			..default()
 		},
 		..default()
@@ -20,8 +20,8 @@ pub fn spawn_ninetile(commands : &mut Commands, handle: Handle<TextureAtlas>, bo
 		commands.entity(parent).add_child(tile);
 		if i == 4 {content = tile}
 	}
-
-	return (parent, content);
+	commands.entity(content).with_children(child_builder);
+	return parent;
 }
 
 fn get_tile(commands : &mut Commands, handle: &Handle<TextureAtlas>, index: usize) -> Entity {

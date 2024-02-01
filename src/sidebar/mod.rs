@@ -9,7 +9,7 @@ pub mod component;
 pub struct SidebarAnimationPlugin;
 impl Plugin for SidebarAnimationPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (react_to_sidebar, play_animation, component::update_content, component::change_category))
+        app.add_systems(Update, (react_to_sidebar, play_animation, component::update_content, component::change_category, component::handle_fix_to_parent_dimension))
 			.add_plugins(ButtonAnimationPlugin)
 			.add_event::<SidebarEvent>();
     }

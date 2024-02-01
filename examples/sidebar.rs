@@ -8,6 +8,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
 		.add_plugins(WorldInspectorPlugin::new())
 		.add_plugins(SidebarAnimationPlugin)
+		.add_plugins(ScrollContainerPlugin)
         .add_systems(Startup, setup)
 		.add_systems(Update, toggle_sidebar)
         .run();
@@ -21,7 +22,8 @@ struct OpenButtonMarker;
 
 fn setup(
 	mut commands : Commands,
-	asset_server: Res<AssetServer>
+	asset_server: Res<AssetServer>,
+	mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
 	commands.spawn(Camera3dBundle::default());
 	commands.spawn(ButtonBundle {
@@ -46,7 +48,9 @@ fn setup(
 					SidebarItem {name: "Cat0Item1".into(), image: asset_server.load("sidebar/cloud-solid.png")},
 					SidebarItem {name: "Cat0Item2".into(), image: asset_server.load("sidebar/cloud-solid.png")},
 					SidebarItem {name: "Cat0Item3".into(), image: asset_server.load("sidebar/cloud-solid.png")},
-					SidebarItem {name: "Cat0Item4".into(), image: asset_server.load("sidebar/cloud-solid.png")}
+					SidebarItem {name: "Cat0Item4".into(), image: asset_server.load("sidebar/cloud-solid.png")},
+					SidebarItem {name: "Cat0Item5".into(), image: asset_server.load("sidebar/cloud-solid.png")},
+					SidebarItem {name: "Cat0Item6".into(), image: asset_server.load("sidebar/cloud-solid.png")}
 				]
 			},
 			SidebarCategory {
@@ -69,7 +73,24 @@ fn setup(
 			}
 		]
 	};
-	let sidebar = spawn_sidebar(&mut commands, &data);
+	// style
+	let texture_handle = asset_server.load("glassPanel_corners.png");
+    let texture_atlas =
+        TextureAtlas::from_grid(texture_handle, Vec2::new(33.3, 33.3), 3, 3, None, None);
+    let texture_atlas_handle = texture_atlases.add(texture_atlas);
+
+	let sidebar_style = SidebarStyle {
+		background_content: texture_atlas_handle.clone(),
+		scrollable: true,
+		background_item: NinetileButton {
+			texture_atlas: texture_atlas_handle.clone(),
+			border: Some(15.),
+			interaction_none: (0..9).collect::<Vec<_>>().try_into().expect("wrong size iterator"),
+			interaction_hovered: None,
+			interaction_pressed: None
+		}
+	};
+	let sidebar = spawn_sidebar(&mut commands, &data, &sidebar_style);
 	commands.insert_resource(SidebarEntity(sidebar));
 }
 

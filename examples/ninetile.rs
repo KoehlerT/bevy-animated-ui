@@ -14,7 +14,7 @@ fn main() {
 fn setup(
 	mut commands : Commands,
 	asset_server: Res<AssetServer>,
-	mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+	mut texture_atlases: ResMut<Assets<TextureAtlas>>
 ) {
 	commands.spawn(Camera3dBundle::default());
 	let text_style = TextStyle {
@@ -43,13 +43,13 @@ fn setup(
         TextureAtlas::from_grid(texture_handle, Vec2::new(33.3, 33.3), 3, 3, None, None);
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
-	let (parent, content) = spawn_ninetile(&mut commands, texture_atlas_handle, Some(15.));
+	let parent = spawn_ninetile(&mut commands, texture_atlas_handle, Some(15.), 
+	|parent|{
+		parent.spawn(TextBundle::from_sections([
+			TextSection::new("This is content!".to_string(), text_style.clone())
+		]));
+	});
 	commands.entity(container).add_child(parent);
-
-	let text = commands.spawn(TextBundle::from_sections([
-		TextSection::new("This is content!".to_string(), text_style.clone())
-	])).id();
-	commands.entity(content).add_child(text);
 
 	// Make interactive button
 	let interactive_button = make_interactive_button(&mut commands, &asset_server, &mut texture_atlases);
@@ -73,15 +73,14 @@ fn make_interactive_button(commands : &mut Commands,
 		border: None
 	};
 
-	let (button, content) = create_ninetile_button(commands, &button_descriptor);
-
-	let text = commands.spawn(TextBundle::from_sections([
-		TextSection::new("This is Buttoncontent!".to_string(), TextStyle {
-			font_size: 20.,
-			..default()
-		})
-	])).id();
-	commands.entity(content).add_child(text);
-
+	let button = create_ninetile_button(commands, &button_descriptor, |parent| {
+		parent.spawn(TextBundle::from_sections([
+			TextSection::new("This is Buttoncontent!".to_string(), TextStyle {
+				font_size: 20.,
+				..default()
+			})
+		]));
+	});
+	
 	return button;
 }

@@ -49,7 +49,7 @@ fn spawn_horizontal_scroll (commands: &mut Commands) -> Entity {
 	let parent = commands.spawn(NodeBundle {
 		style: Style {
 			flex_direction: FlexDirection::Column,
-			height: Val::Percent(50.),
+			height: Val::Auto,
 			width: Val::Px(300.),
 			overflow: Overflow::clip_x(),
 			..default()
